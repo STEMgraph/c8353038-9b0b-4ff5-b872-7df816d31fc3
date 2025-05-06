@@ -1,51 +1,88 @@
 <!---
 {
-  "depends_on": [],
+  "id": "c8353038-9b0b-4ff5-b872-7df816d31fc3",
+  "depends_on": ["e8add8e9-7a67-4b50-af89-6c1ce6558e0d"],
   "author": "Stephan Bökelmann",
-  "first_used": "2025-03-17",
-  "keywords": ["learning", "exercises", "education", "practice"]
+  "first_used": "2025-05-06",
+  "keywords": ["PlantUML", "Kroki", "Sequence Diagram", "Docker", "SVG Rendering"]
 }
 --->
 
-# Learning Through Exercises
+# Rendering Sequence Diagrams with Kroki and PlantUML
 
-## Introduction
-Learning by doing is one of the most effective methods to acquire new knowledge and skills. Rather than passively consuming information, actively engaging in problem-solving fosters deeper understanding and long-term retention. By working through structured exercises, students can grasp complex concepts in a more intuitive and applicable way. This approach is particularly beneficial in technical fields like programming, mathematics, and engineering.
+> In this exercise you will learn how to create a basic sequence diagram using PlantUML syntax in a text file. Furthermore we will explore how to render this diagram to SVG format using the Kroki API, and subsequently by running Kroki locally on Ubuntu via a Docker container.
+
+### Introduction
+
+Visualizing system interactions is critical for understanding and communicating software behavior. Sequence diagrams offer a structured method to represent the order and interaction of messages between system components over time. One of the most popular tools to define such diagrams is [PlantUML](https://plantuml.com), which allows developers to write UML diagrams in plain text.
+
+To render PlantUML diagrams to formats like SVG, we can use [Kroki](https://kroki.io), an open-source diagram rendering service that supports many diagram types. Kroki provides both a public web API and a Docker-based deployment for local usage.
+
+In this exercise, you will write a simple PlantUML sequence diagram in a text file and render it to SVG in two ways: using Kroki's public API and by running Kroki locally on Ubuntu via a Docker container. You will also learn how to use HTTP request tools (like `curl`) and understand how Docker facilitates portable and isolated environments.
+
+This process helps build familiarity with modern DevOps tools and practices, and reinforces the idea of infrastructure as code.
 
 ### Further Readings and Other Sources
-- [The Importance of Practice in Learning](https://www.sciencedirect.com/science/article/pii/S036013151300062X)
-- "The Art of Learning" by Josh Waitzkin
-- [How to Learn Effectively: 5 Key Strategies](https://www.edutopia.org/article/5-research-backed-learning-strategies)
 
-## Tasks
-1. **Write a Summary**: Summarize the concept of "learning by doing" in 3-5 sentences.
-2. **Example Identification**: List three examples from your own experience where learning through exercises helped you understand a topic better.
-3. **Create an Exercise**: Design a simple exercise for a topic of your choice that someone else could use to practice.
-4. **Follow an Exercise**: Find an online tutorial that includes exercises and complete at least two of them.
-5. **Modify an Existing Exercise**: Take a basic problem from a textbook or online course and modify it to make it slightly more challenging.
-6. **Pair Learning**: Explain a concept to a partner and guide them through an exercise without giving direct answers.
-7. **Review Mistakes**: Look at an exercise you've previously completed incorrectly. Identify why the mistake happened and how to prevent it in the future.
-8. **Time Challenge**: Set a timer for 10 minutes and try to solve as many simple exercises as possible on a given topic.
-9. **Self-Assessment**: Create a checklist to evaluate your own performance in completing exercises effectively.
-10. **Reflect on Progress**: Write a short paragraph on how this structured approach to exercises has influenced your learning.
+* [Kroki Documentation](https://docs.kroki.io/)
+* [PlantUML Sequence Diagrams](https://plantuml.com/sequence-diagram)
+* [Kroki GitHub Repository](https://github.com/yuzutech/kroki)
+* [Docker Getting Started](https://docs.docker.com/get-started/)
 
-<details>
-  <summary>Tip for Task 5</summary>
-  Try making small adjustments first, such as increasing the difficulty slightly or adding an extra constraint.
-</details>
+### Tasks
 
-## Questions
-1. What are the main benefits of learning through exercises compared to passive learning?
-2. How do exercises improve long-term retention?
-3. Can you think of a subject where learning through exercises might be less effective? Why?
-4. What role does feedback play in learning through exercises?
-5. How can self-designed exercises improve understanding?
-6. Why is it beneficial to review past mistakes in exercises?
-7. How does explaining a concept to someone else reinforce your own understanding?
-8. What strategies can you use to stay motivated when practicing with exercises?
-9. How can timed challenges contribute to learning efficiency?
-10. How do exercises help bridge the gap between theory and practical application?
+#### 1. Write a Simple Sequence Diagram
 
-## Advice
-Practice consistently and seek out diverse exercises that challenge different aspects of a topic. Combine exercises with reflection and feedback to maximize your learning efficiency. Don't hesitate to adapt exercises to fit your own needs and ensure that you're actively engaging with the material, rather than just going through the motions.
+Create a file named `sequence.puml` with the following content:
 
+```plantuml
+@startuml
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+Alice -> Bob: Another Message
+@enduml
+```
+
+#### 2. Render to SVG using the Kroki API
+
+Use `curl` to send the diagram content to Kroki's public API:
+
+```bash
+curl -H "Content-Type: text/plain" \
+     --data-binary @sequence.puml \
+     https://kroki.io/plantuml/svg -o sequence.svg
+```
+
+This command uploads the plain text file and retrieves the resulting SVG image.
+
+#### 3. Run Kroki via Docker
+
+Pull and run the Kroki container:
+
+```bash
+docker pull yuzutech/kroki
+
+docker run -d -p 8000:8000 yuzutech/kroki
+```
+
+Then use `curl` to post your file to the local server:
+
+```bash
+curl -H "Content-Type: text/plain" \
+     --data-binary @sequence.puml \
+     http://localhost:8000/plantuml/svg -o sequence_local.svg
+```
+
+You can now compare both SVG outputs.
+
+### Questions
+
+1. What is the purpose of the `@startuml` and `@enduml` tags in a `.puml` file?
+2. What HTTP method is used by `curl` in this exercise, and why is it appropriate?
+3. How does running Kroki in Docker improve portability and reproducibility?
+4. Compare the output of the public Kroki API and the local Docker instance. Are there any differences?
+5. Why might someone prefer to use a local Kroki instance instead of the public API?
+
+### Advice
+
+Understanding how to transform text-based diagram specifications into visual formats is a valuable skill in documentation, software design, and DevOps workflows. Start with the simplest approach — using the Kroki API — to grasp how the process works. Once that’s clear, transitioning to a Dockerized version is a natural next step for offline or private use cases. Don’t be discouraged by setup or command-line complexity; it’s all part of learning reproducible infrastructure techniques. If you're unfamiliar with Docker, check out the Docker exercise sheet [here](./docker_basics.md) for more foundational guidance.
