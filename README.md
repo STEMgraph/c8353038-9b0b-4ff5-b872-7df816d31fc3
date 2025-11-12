@@ -1,6 +1,7 @@
 <!---
 {
   "id": "c8353038-9b0b-4ff5-b872-7df816d31fc3",
+  "teaches": "Rendering Sequence Diagrams with Kroki and PlantUML",
   "depends_on": ["e8add8e9-7a67-4b50-af89-6c1ce6558e0d"],
   "author": "Stephan Bökelmann",
   "first_used": "2025-05-06",
